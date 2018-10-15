@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>测试界面</h1>
     <video></video>
   </div>
 </template>

@@ -25,9 +25,8 @@ const winURL = process.env.NODE_ENV === 'development'
 MainWindow.prototype.createWindow = function () {
   this.mainWindow = new BrowserWindow(this.options)
   this.mainWindow.loadURL(winURL)
-  let $this = this
-  this.mainWindow.on('ready-to-show', function () {
-    $this.mainWindow.show()
+  this.mainWindow.on('ready-to-show', () => {
+    this.mainWindow.show()
   })
 }
 
@@ -53,6 +52,10 @@ MainWindow.prototype.minimize = function () {
 
 MainWindow.prototype.restore = function () {
   this.mainWindow.restore()
+}
+
+MainWindow.prototype.getId = function () {
+  return this.mainWindow.id
 }
 
 export default MainWindow

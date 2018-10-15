@@ -18,13 +18,17 @@
             and so much more.
           </p>
           <div class="flex">
-            <button @click="openWindow">Open Window</button><br><br>
+            <button @click="openWindow">Open Window</button>
+            <div class="flex-center">
+              <input class="flex-input" style="marginTop: 1rem;marginRight: 1rem" type="text" v-model="roomname">
+              <button @click="copy">Copy</button>
+            </div>
           </div>
           <div class="flex">
-            <span class="flex-span">{{roomname}}</span>
-          </div>
-          <div class="flex">
-            <button @click="connectWindow">Connect Window</button><br><br>
+            <div>
+              <input class="flex-input" type="text" v-model="content" placeholder="Please enter connect room name.">
+            </div>
+            <button @click="connectWindow">Connect Window</button>
           </div>
         </div>
       </div>
@@ -34,26 +38,39 @@
 
 <script>
   import SystemInformation from './LandingPage/SystemInformation'
-  // import InitShareWindow from '../utils/init.js'
+  import InitShareWindow from '../utils/init.js'
+  const ipcRenderer = require('electron').ipcRenderer
   export default {
     name: 'landing-page',
     components: { SystemInformation },
+    data () {
+      return {
+        content: ''
+      }
+    },
     computed: {
       roomname () {
-        console.log(this.$store.state)
-        return 'room name: ' + this.$store.state.roomname
+        return 'room name:' + this.$store.state.roomname
       }
+    },
+    mounted () {
+      ipcRenderer.on('sendEvent', (evt, arg) => {
+        this.$store.commit('updateRoomName', arg)
+      })
     },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
       },
       openWindow () {
-        const electron = require('electron')
-        const ipcRenderer = electron.ipcRenderer
         ipcRenderer.send('openWindow')
       },
+      copy () {
+        const { clipboard } = require('electron')
+        clipboard.writeText(this.roomname.split(':')[1])
+      },
       connectWindow () {
+        new InitShareWindow().connect(this.content)
       }
     }
   }
@@ -142,15 +159,29 @@
     background-color: transparent;
   }
 
-  .flex {
+  .flex-center {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+  }
+
+  .flex {
     padding-bottom: 1rem;
   }
 
   .flex-span {
     margin-left: 1rem;
     font-size: 1.3rem;
+  }
+
+  .flex-input {
+    width: 80%;
+    height: 35px;
+    padding: 5px 10px;
+    border: none;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    font-size: 14px;
   }
 </style>

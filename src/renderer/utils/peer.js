@@ -51,6 +51,9 @@ var createPeerConnection = function () {
   // get remote webrtc config (ice/stun/turn)
   function getRemoteConfig (cb) {
     nets({url: remoteConfigUrl, json: true}, function gotConfig (err, resp, config) {
+      console.log(err)
+      console.log(resp)
+      console.log(config)
       if (err || resp.statusCode > 299) config = undefined // ignore errors
       cb(null, config)
     })

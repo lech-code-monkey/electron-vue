@@ -75,8 +75,8 @@ APP.prototype.initIPC = function () {
       return
     }
     $this.rangeWindow = new BrowserWindow({
-      width: 1280,
-      height: 720,
+      width: 1300,
+      height: 820,
       parent: $this.mainWindow
     })
     const winURL = process.env.NODE_ENV === 'development'
@@ -90,6 +90,7 @@ APP.prototype.initIPC = function () {
 APP.prototype.createMainWindow = function () {
   if (!this.ready) return false
   this.mainWindow = new MainWindow()
+  global.mainWindowId = this.mainWindow.getId()
 }
 
 APP.prototype.closeAllWindows = function () {

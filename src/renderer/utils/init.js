@@ -54,14 +54,21 @@ InitShareWindow.prototype.share = function (sourcesId) {
   }
   peerConnection.on('connected', (newPeer, remote) => {
     this.peer = newPeer
-    console.log(this.peer)
+    console.log(this.perr)
   })
   connect.host(peerConnection, opts)
 }
 
-InitShareWindow.prototype.connect = function () {
+InitShareWindow.prototype.connect = function (room) {
   // 连接分享窗口
-  // connect.verifyUserRoom(peerConnection, opts)
+  connect.verifyUserRoom(peerConnection, room, (err, room, config) => {
+    if (err) {
+      this.error('Error! ' + err.message)
+      return
+    }
+    console.log(config)
+    // connect.remote(peerConnection, config.config, config.room)
+  })
 }
 
 InitShareWindow.prototype.error = function (e) {

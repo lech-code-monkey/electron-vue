@@ -1,14 +1,9 @@
-module.exports.verifyUserRoom = function (peerConnection, cb) {
+module.exports.verifyUserRoom = function (peerConnection, room, cb) {
   peerConnection.getRemoteConfig(function (err, config) {
     if (err) return cb(err)
-    // function onJoinClick (ev) {
-    //   ev.preventDefault()
-    //   var room = ui.inputs.paste.value
-    //   if (!room) return
-    //   peerConnection.verifyRoom(room, function (err) {
-    //     cb(err, room, config)
-    //   })
-    // }
+    peerConnection.verifyRoom(room, function (err) {
+      cb(err, room, config)
+    })
   })
 }
 
@@ -38,8 +33,12 @@ module.exports.host = function (peerConnection, opts) {
     if (err) return
     opts.room = room
     opts.config = config
-    const store = require('../store')
-    store.default.commit('updateRoomName', room)
+
+    // 向主窗口发送房间名
+    const electron = require('electron')
+    const mainWindowId = electron.remote.getGlobal('mainWindowId')
+    electron.ipcRenderer.sendTo(mainWindowId, 'sendEvent', room)
+
     peerConnection.hostPeer(opts, function (err, peer) {
       if (err) {
         console.log(err)
